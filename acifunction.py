@@ -205,3 +205,42 @@ def Create_accessPG(md, name, linkLevel, cdp, lldp, aaep):
     cobra.model.infra.RsLldpIfPol(AccessPG, tnLldpIfPolName=lldp)
     cobra.model.infra.RsAttEntP(AccessPG, tDn='uni/infra/attentp-%s' % aaep)
     push_to_apic(md,topMo)
+def Create_pcPG(md, name, linkLevel, cdp, lldp, lacp, aaep):
+    """
+
+    create Port-channel Policy Group
+
+    :param md: login session created from apic_login functions
+    :param name: the name of Policy Group
+    :param linkLevel: Link Level interface Policy name
+    :param cdp: CDP interface Policy name
+    :param lldp: LLDP interface Policy name
+    :param lacp: LACP interface Policy name
+    :param aaep: AAEP name
+
+    """
+
+    print("Defining Port-channel Policy Group")
+    print("... name : ", end='')
+    prBlue(name)
+    print("... Link Level Interface Policy : ", end='')
+    prBlue(linkLevel)
+    print("... CDP Interface Policy : ", end='')
+    prBlue(cdp)
+    print("... LLDP Interface Policy : ", end='')
+    prBlue(lldp)
+    print("... LACP Interface Policy : ", end='')
+    prBlue(lacp)
+    print("... Associated AAEP : ", end='')
+    prBlue(aaep)
+
+    top_dn = cobra.mit.naming.Dn.fromString('uni/infra/funcprof/accbundle-%s' % name)
+    topMo = md.lookupByDn(top_dn.getParent())
+
+    pcPG = cobra.model.infra.AccBndlGrp(topMo, name=name)
+    cobra.model.infra.RsHIfPol(pcPG, tnFabricHIfPolName=linkLevel)
+    cobra.model.infra.RsCdpIfPol(pcPG, tnCdpIfPolName=cdp)
+    cobra.model.infra.RsLldpIfPol(pcPG, tnLldpIfPolName=lldp)
+    cobra.model.infra.RsLacpPol(pcPG, tnLacpLagPolName=lacp)
+    cobra.model.infra.RsAttEntP(pcPG, tDn='uni/infra/attentp-%s' % aaep)
+    push_to_apic(md,topMo)
